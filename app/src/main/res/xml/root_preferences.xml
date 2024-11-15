@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/notifications">
+        <SwitchPreferenceCompat
+            app:key="pref_enable_notifications"
+            app:summary="@string/notification_summary"
+            app:title="@string/enable_notifications" />
+
+        <SwitchPreferenceCompat
+            app:dependency="pref_enable_notifications"
+            app:key="pref_sounds_vibrations"
+            app:summary="Enable sound and vibrations for notifications"
+            app:title="Sounds and Vibrations" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Theme and Appearance">
+        <ListPreference
+            app:defaultValue="system"
+            app:entries="@array/theme_options"
+            app:entryValues="@array/theme_values"
+            app:key="pref_theme"
+            app:summary="Choose app theme"
+            app:title="Theme" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Security">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="biometric_authentication"
+            app:summary="Use biometrics to secure the app"
+            app:title="Enable Biometric Authentication" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
