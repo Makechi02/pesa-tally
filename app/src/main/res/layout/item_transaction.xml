@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/text_day"
+        android:id="@+id/text_amount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Day 1"
-        android:textSize="16sp"/>
+        android:text="KES. 500"
+        android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/text_amount_saved"
+        android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Amount: 1"
-        android:textSize="16sp"/>
+        android:text="2024-11-25"
+        android:textSize="14sp" />
 
 </LinearLayout>

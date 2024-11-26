@@ -26,7 +26,7 @@ public class DailySavingsAdapter extends RecyclerView.Adapter<DailySavingsAdapte
     @NotNull
     @Override
     public DailySavingsAdapter.DailySavingsViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_daily_savings, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_transaction, viewGroup, false);
         return new DailySavingsViewHolder(view);
     }
 
@@ -51,8 +51,8 @@ public class DailySavingsAdapter extends RecyclerView.Adapter<DailySavingsAdapte
         public DailySavingsViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
-            dayTextView = itemView.findViewById(R.id.text_day);
-            amountTextView = itemView.findViewById(R.id.text_amount_saved);
+            dayTextView = itemView.findViewById(R.id.text_date);
+            amountTextView = itemView.findViewById(R.id.text_amount);
         }
     }
 }

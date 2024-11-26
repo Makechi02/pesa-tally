@@ -11,4 +11,7 @@
 
     <color name="gray">#FF333333</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="deposit_color">#4CAF50</color>
+    <color name="withdrawal_color">#F44336</color>
 </resources>

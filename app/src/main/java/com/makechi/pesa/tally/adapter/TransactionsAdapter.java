@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.makechi.pesa.tally.R;
 import com.makechi.pesa.tally.entity.Transaction;
+import com.makechi.pesa.tally.util.Formatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,16 +27,23 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
     @NotNull
     @Override
     public TransactionViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_daily_savings, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_transaction, viewGroup, false);
         return new TransactionViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull TransactionViewHolder transactionViewHolder, int i) {
+    public void onBindViewHolder(@NonNull @NotNull TransactionViewHolder viewHolder, int i) {
         Transaction transaction = transactions.get(i);
 
-        transactionViewHolder.dayTextView.setText("Date: " + transaction.getDate());
-        transactionViewHolder.amountTextView.setText("Amount: " + transaction.getAmount());
+        viewHolder.dateTextView.setText(transaction.getDate());
+
+        if (transaction.getType().equals("DEPOSIT")) {
+            viewHolder.amountTextView.setText(Formatter.formatDepositWithCurrency(transaction.getAmount()));
+            viewHolder.amountTextView.setTextColor(viewHolder.amountTextView.getContext().getColor(R.color.deposit_color));
+        } else {
+            viewHolder.amountTextView.setText(Formatter.formatWithdrawalWithCurrency(transaction.getAmount()));
+            viewHolder.amountTextView.setTextColor(viewHolder.amountTextView.getContext().getColor(R.color.withdrawal_color));
+        }
     }
 
     @Override
@@ -45,14 +53,14 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView dayTextView;
+        private final TextView dateTextView;
         private final TextView amountTextView;
 
         public TransactionViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
-            dayTextView = itemView.findViewById(R.id.text_day);
-            amountTextView = itemView.findViewById(R.id.text_amount_saved);
+            dateTextView = itemView.findViewById(R.id.text_date);
+            amountTextView = itemView.findViewById(R.id.text_amount);
         }
     }
 }
