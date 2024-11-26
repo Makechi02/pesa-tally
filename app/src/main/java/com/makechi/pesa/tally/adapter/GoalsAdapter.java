@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.makechi.pesa.tally.R;
 import com.makechi.pesa.tally.entity.Goal;
+import com.makechi.pesa.tally.util.Formatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalViewHold
         int progress = (int) ((goal.getAmountSaved() / goal.getTargetAmount()) * 100);
 
         goalViewHolder.goalNameTextView.setText(goal.getName());
-        goalViewHolder.amountSavedTextView.setText("Ksh. " + goal.getAmountSaved());
-        goalViewHolder.targetAmountTextView.setText("Ksh. " + goal.getTargetAmount());
+        goalViewHolder.amountSavedTextView.setText(Formatter.formatMoneyWithCurrency(goal.getAmountSaved()));
+        goalViewHolder.targetAmountTextView.setText(Formatter.formatMoneyWithCurrency(goal.getTargetAmount()));
         goalViewHolder.progressBar.setProgress(progress);
         goalViewHolder.progressTextView.setText(progress + "%");
 
@@ -71,7 +72,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalViewHold
             super(itemView);
 
             goalNameTextView = itemView.findViewById(R.id.text_goal_name);
-            amountSavedTextView = itemView.findViewById(R.id.text_amount_saved);
+            amountSavedTextView = itemView.findViewById(R.id.text_amount);
             targetAmountTextView = itemView.findViewById(R.id.text_target_amount);
             progressBar = itemView.findViewById(R.id.progress_goal);
             progressTextView = itemView.findViewById(R.id.text_progress);
