@@ -4,17 +4,15 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import com.makechi.pesa.tally.dao.DailySavingsDao;
 import com.makechi.pesa.tally.dao.GoalDao;
 import com.makechi.pesa.tally.dao.TransactionDao;
-import com.makechi.pesa.tally.entity.DailySavings;
 import com.makechi.pesa.tally.entity.Goal;
 import com.makechi.pesa.tally.entity.Transaction;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {DailySavings.class, Goal.class, Transaction.class}, version = 1, exportSchema = false)
+@Database(entities = {Goal.class, Transaction.class}, version = 1, exportSchema = false)
 public abstract class PesaTallyDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -32,8 +30,6 @@ public abstract class PesaTallyDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-    public abstract DailySavingsDao dailySavingsDao();
 
     public abstract GoalDao goalDao();
 

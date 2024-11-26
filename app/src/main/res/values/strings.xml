@@ -4,7 +4,6 @@
 
     <!--    GOALS   -->
     <string name="goals">Goals</string>
-    <string name="daily_savings">Daily Savings</string>
     <string name="custom_goals">Custom Goals</string>
     <string name="goal_add_success">Goal added successfully</string>
     <string name="goal_not_saved">Goal not added!</string>

@@ -1,14 +1,23 @@
 package com.makechi.pesa.tally;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+import androidx.activity.result.ActivityResult;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-import com.makechi.pesa.tally.adapter.GoalsPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.makechi.pesa.tally.adapter.GoalsAdapter;
+import com.makechi.pesa.tally.entity.Goal;
+import com.makechi.pesa.tally.util.BetterActivityResult;
+import com.makechi.pesa.tally.viewModel.GoalViewModel;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +25,10 @@ import com.makechi.pesa.tally.adapter.GoalsPagerAdapter;
  * create an instance of this fragment.
  */
 public class GoalsFragment extends Fragment {
+
+    private final BetterActivityResult<Intent, ActivityResult> launcher = BetterActivityResult.registerForActivityResult(this);
+    private GoalViewModel goalViewModel;
+    private GoalsAdapter goalsAdapter;
 
     public GoalsFragment() {
     }
@@ -44,15 +57,49 @@ public class GoalsFragment extends Fragment {
 
         requireActivity().setTitle(R.string.goals);
 
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        ViewPager2 viewPager = view.findViewById(R.id.view_pager);
+        goalsAdapter = new GoalsAdapter(goal -> {
+            Intent intent = new Intent(requireContext(), GoalDetailsActivity.class);
+            intent.putExtra("GOAL_ID", goal.getId());
+            startActivity(intent);
+        });
 
-        GoalsPagerAdapter pagerAdapter = new GoalsPagerAdapter(this);
-        viewPager.setAdapter(pagerAdapter);
+        RecyclerView goalsRecyclerView = view.findViewById(R.id.custom_goals_recycler_view);
+        goalsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        goalsRecyclerView.setAdapter(goalsAdapter);
 
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setText(position == 0 ? R.string.daily_savings : R.string.custom_goals))
-                .attach();
+        ExtendedFloatingActionButton extendedFloatingActionButton = view.findViewById(R.id.fab_add_goal);
+        extendedFloatingActionButton.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), AddGoalActivity.class);
+            launcher.launch(intent, result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Intent data = result.getData();
+
+                    String name = data.getStringExtra("name");
+                    String description = data.getStringExtra("description");
+                    String targetAmount = data.getStringExtra("targetAmount");
+                    String deadline = data.getStringExtra("deadline");
+
+                    Goal newGoal = new Goal(name, description, Double.parseDouble(targetAmount), deadline);
+                    goalViewModel.saveGoal(newGoal);
+
+                    showToastMessage(getString(R.string.goal_add_success));
+                } else {
+                    showToastMessage(getString(R.string.goal_not_saved));
+                }
+            });
+        });
+
+        goalViewModel = new ViewModelProvider(this).get(GoalViewModel.class);
+        goalViewModel.getAllGoals().observe(getViewLifecycleOwner(), goals -> goalsAdapter.setGoals(goals));
 
         return view;
+    }
+
+    private void showToastMessage(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showErrorToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 }
