@@ -22,6 +22,9 @@
     <string name="confirm_delete_goal">Are you sure you want to delete this goal?</string>
     <string name="goal_description">Goal Description</string>
     <string name="deadline_not_set">Not Set</string>
+    <string name="target">Target</string>
+    <string name="saved">Saved</string>
+    <string name="remaining">Remaining</string>
 
     <!--    TRANSACTIONS    -->
     <string name="transactions">Transactions</string>

@@ -19,6 +19,7 @@ import com.makechi.pesa.tally.adapter.TransactionsAdapter;
 import com.makechi.pesa.tally.entity.Goal;
 import com.makechi.pesa.tally.entity.Transaction;
 import com.makechi.pesa.tally.util.BetterActivityResult;
+import com.makechi.pesa.tally.util.Formatter;
 import com.makechi.pesa.tally.viewModel.GoalViewModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,10 +27,10 @@ import java.util.Objects;
 
 public class GoalDetailsActivity extends BaseActivity {
 
-    private static final String CURRENCY = "Ksh. ";
     protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerForActivityResult(this);
     private GoalViewModel goalViewModel;
-    private TextView descriptionTextView, savedTextView, targetTextView, deadlineTextView, transactionCountTextView;
+    private TextView descriptionTextView, progressTextView, savedTextView, targetTextView, remainingTextView,
+            deadlineTextView, transactionCountTextView;
     private ProgressBar progressBar;
     private LinearLayout transactionsLayout;
     private TransactionsAdapter transactionsAdapter;
@@ -43,9 +44,11 @@ public class GoalDetailsActivity extends BaseActivity {
         descriptionTextView = findViewById(R.id.text_view_goal_description);
         savedTextView = findViewById(R.id.text_view_goal_saved);
         targetTextView = findViewById(R.id.text_view_target);
+        remainingTextView = findViewById(R.id.text_view_remaining);
         deadlineTextView = findViewById(R.id.text_view_goal_deadline);
         transactionCountTextView = findViewById(R.id.text_view_goal_transactions);
         progressBar = findViewById(R.id.progress_goal);
+        progressTextView = findViewById(R.id.text_progress);
         transactionsLayout = findViewById(R.id.layout_transactions);
         RecyclerView transactionsRecyclerView = findViewById(R.id.recycler_view_goal_transactions);
 
@@ -118,13 +121,17 @@ public class GoalDetailsActivity extends BaseActivity {
 
             currentGoal = goal;
 
+            double remainingAmount = goal.getTargetAmount() - goal.getAmountSaved();
+
             descriptionTextView.setText(goal.getDescription());
-            savedTextView.setText(CURRENCY + goal.getAmountSaved());
-            targetTextView.setText(CURRENCY + goal.getTargetAmount());
+            savedTextView.setText(Formatter.formatMoneyWithCurrency(goal.getAmountSaved()));
+            targetTextView.setText(Formatter.formatMoneyWithCurrency(goal.getTargetAmount()));
+            remainingTextView.setText(Formatter.formatMoneyWithCurrency(remainingAmount));
             deadlineTextView.setText(goal.getDeadline());
 
             int progress = (int) ((goal.getAmountSaved() / goal.getTargetAmount()) * 100);
             progressBar.setProgress(progress);
+            progressTextView.setText(progress + "%");
         } else {
             showErrorToast("Failed to fetch goal details");
         }
