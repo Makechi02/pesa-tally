@@ -14,4 +14,8 @@
 
     <color name="deposit_color">#4CAF50</color>
     <color name="withdrawal_color">#F44336</color>
+
+    <color name="low_progress_color">#FF64B5F6</color>
+    <color name="medium_progress_color">#FFFFD54F</color>
+    <color name="high_progress_color">#FF81C784</color>
 </resources>

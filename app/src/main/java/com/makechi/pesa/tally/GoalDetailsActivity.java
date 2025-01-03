@@ -4,22 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.makechi.pesa.tally.adapter.TransactionsAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.makechi.pesa.tally.adapter.GoalDetailsPagerAdapter;
 import com.makechi.pesa.tally.entity.Goal;
-import com.makechi.pesa.tally.entity.Transaction;
 import com.makechi.pesa.tally.util.BetterActivityResult;
-import com.makechi.pesa.tally.util.Formatter;
 import com.makechi.pesa.tally.viewModel.GoalViewModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,11 +23,6 @@ public class GoalDetailsActivity extends BaseActivity {
 
     protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerForActivityResult(this);
     private GoalViewModel goalViewModel;
-    private TextView descriptionTextView, progressTextView, savedTextView, targetTextView, remainingTextView,
-            deadlineTextView, transactionCountTextView;
-    private ProgressBar progressBar;
-    private LinearLayout transactionsLayout;
-    private TransactionsAdapter transactionsAdapter;
     private Goal currentGoal;
 
     @Override
@@ -41,54 +30,18 @@ public class GoalDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         int goalId = getIntent().getIntExtra("GOAL_ID", -1);
-        descriptionTextView = findViewById(R.id.text_view_goal_description);
-        savedTextView = findViewById(R.id.text_view_goal_saved);
-        targetTextView = findViewById(R.id.text_view_target);
-        remainingTextView = findViewById(R.id.text_view_remaining);
-        deadlineTextView = findViewById(R.id.text_view_goal_deadline);
-        transactionCountTextView = findViewById(R.id.text_view_goal_transactions);
-        progressBar = findViewById(R.id.progress_goal);
-        progressTextView = findViewById(R.id.text_progress);
-        transactionsLayout = findViewById(R.id.layout_transactions);
-        RecyclerView transactionsRecyclerView = findViewById(R.id.recycler_view_goal_transactions);
 
-        transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        transactionsAdapter = new TransactionsAdapter();
-        transactionsRecyclerView.setAdapter(transactionsAdapter);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ViewPager2 viewPager = findViewById(R.id.view_pager);
 
-        ExtendedFloatingActionButton extendedFloatingActionButton = findViewById(R.id.fab_add_contribution);
-        extendedFloatingActionButton.setOnClickListener(view -> handleAddContribution());
+        GoalDetailsPagerAdapter pagerAdapter = new GoalDetailsPagerAdapter(this, goalId);
+        viewPager.setAdapter(pagerAdapter);
+
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setText(position == 0 ? R.string.goals : R.string.transactions))
+                .attach();
 
         goalViewModel = new ViewModelProvider(this).get(GoalViewModel.class);
         goalViewModel.getGoalById(goalId).observe(this, this::populateGoalDetails);
-        goalViewModel.getTransactionByGoal(goalId).observe(this, transactions -> {
-            int count = transactions.size();
-
-            if (transactions.isEmpty()) {
-                transactionsLayout.setVisibility(View.GONE);
-            }
-
-            transactionCountTextView.setText(String.valueOf(count));
-            transactionsAdapter.setTransactions(transactions);
-        });
-    }
-
-    private void handleAddContribution() {
-        Intent intent = new Intent(this, AddContributionActivity.class);
-        activityLauncher.launch(intent, result -> {
-            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                Intent data = result.getData();
-                String date = data.getStringExtra("date");
-                String type = data.getStringExtra("type");
-                double amount = data.getDoubleExtra("amount", 0);
-
-                Transaction transaction = new Transaction(currentGoal.getId(), date, amount, type);
-                goalViewModel.addTransaction(transaction, currentGoal);
-                showToastMessage(getString(R.string.contribution_add_success));
-            } else {
-                showToastMessage(getString(R.string.contribution_not_saved));
-            }
-        });
     }
 
     @Override
@@ -117,21 +70,8 @@ public class GoalDetailsActivity extends BaseActivity {
 
     private void populateGoalDetails(Goal goal) {
         if (goal != null) {
-            Objects.requireNonNull(getSupportActionBar()).setTitle(goal.getName());
-
             currentGoal = goal;
-
-            double remainingAmount = goal.getTargetAmount() - goal.getAmountSaved();
-
-            descriptionTextView.setText(goal.getDescription());
-            savedTextView.setText(Formatter.formatMoneyWithCurrency(goal.getAmountSaved()));
-            targetTextView.setText(Formatter.formatMoneyWithCurrency(goal.getTargetAmount()));
-            remainingTextView.setText(Formatter.formatMoneyWithCurrency(remainingAmount));
-            deadlineTextView.setText(goal.getDeadline());
-
-            int progress = (int) ((goal.getAmountSaved() / goal.getTargetAmount()) * 100);
-            progressBar.setProgress(progress);
-            progressTextView.setText(progress + "%");
+            Objects.requireNonNull(getSupportActionBar()).setTitle(currentGoal.getName());
         } else {
             showErrorToast("Failed to fetch goal details");
         }
