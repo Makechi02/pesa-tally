@@ -39,9 +39,9 @@ public class JarView extends View {
         liquidPaint.setStyle(Paint.Style.FILL);
 
         waveAnimator = ValueAnimator.ofFloat(0, 1);
-        waveAnimator.setDuration(1500);
+        waveAnimator.setDuration(4000);
         waveAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        waveAnimator.setRepeatMode(ValueAnimator.RESTART);
+        waveAnimator.setRepeatMode(ValueAnimator.REVERSE);
         waveAnimator.addUpdateListener(animation -> {
             waveOffset = (float) animation.getAnimatedValue();
             invalidate();
@@ -77,8 +77,8 @@ public class JarView extends View {
 
         // Draw the liquid with improved animation
         Path liquidPath = new Path();
-        float waveHeight = 20; // Height of the wave
-        float waveLength = width / 4; // Length of the wave
+        float waveHeight = 10; // Height of the wave
+        float waveLength = width / 2; // Length of the wave
 
         liquidPath.moveTo(jarLeft, liquidHeight);
         for (float x = jarLeft; x <= jarRight; x += 1) {
