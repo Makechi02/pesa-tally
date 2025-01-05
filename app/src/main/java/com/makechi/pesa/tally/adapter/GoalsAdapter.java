@@ -36,12 +36,13 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalViewHold
     public void onBindViewHolder(@NonNull @NotNull GoalsAdapter.GoalViewHolder goalViewHolder, int i) {
         Goal goal = goals.get(i);
         int progress = (int) ((goal.getAmountSaved() / goal.getTargetAmount()) * 100);
+        double percentageProgress = ((goal.getAmountSaved() / goal.getTargetAmount()) * 100);
 
         goalViewHolder.goalNameTextView.setText(goal.getName());
         goalViewHolder.amountSavedTextView.setText(Formatter.formatMoneyWithCurrency(goal.getAmountSaved()));
         goalViewHolder.targetAmountTextView.setText(Formatter.formatMoneyWithCurrency(goal.getTargetAmount()));
         goalViewHolder.progressBar.setProgress(progress);
-        goalViewHolder.progressTextView.setText(progress + "%");
+        goalViewHolder.progressTextView.setText(Formatter.formatProgress(percentageProgress));
 
         goalViewHolder.itemView.setOnClickListener(view -> listener.onGoalClicked(goal));
     }
